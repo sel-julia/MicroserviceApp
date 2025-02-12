@@ -66,7 +66,10 @@ public class ResourceServiceImpl implements ResourceService {
         List<Long> existingIds = StreamSupport.stream(existingResourcesList.spliterator(), false)
                 .map(Resource::getId)
                 .toList();
-        resourceRepository.deleteAllById(existingIds);
+        if (!existingIds.isEmpty()) {
+            resourceRepository.deleteAllById(existingIds);
+            songClient.deleteSongsMetadata(existingIds);
+        }
 
         return existingIds;
     }
