@@ -53,8 +53,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(errorResponseDTO);
     }
 
-    @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<ErrorResponse> handleNumberFormatException(NumberFormatException ex) {
+    @ExceptionHandler({NumberFormatException.class, Exception.class})
+    public ResponseEntity<ErrorResponse> handleNumberFormatException(Exception ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         var errorResponseDTO = ErrorResponse.builder()
                 .errorMessage(ex.getMessage())

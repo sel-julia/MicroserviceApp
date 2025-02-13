@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,29 +29,30 @@ public class SongServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveSongMetadata(@Valid @RequestBody SongDTO song) {
+    public ResponseEntity<Map<String, Long>> saveSongMetadata(@Valid @RequestBody SongDTO song) {
         Song songEntity = mapper.fromDTO(song);
         long songId = songService.save(songEntity);
-        return ResponseEntity.ok("{\"id\": " + songId + "}");
+        return ResponseEntity.ok()
+                .body(Collections.singletonMap("id", songId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getSongMetadata(@PathVariable("id") Long id) {
+    public ResponseEntity<SongDTO> getSongMetadata(@PathVariable("id") Long id) {
         Song song = songService.get(id);
 
         return ResponseEntity.ok()
-                .body(song);
+                .body(mapper.toDTO(song));
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteSongMetadata(@RequestParam("id") @Size(max = 200)  String ids) {
+    public ResponseEntity<Map<String, List<Long>>> deleteSongMetadata(@RequestParam("id") @Size(max = 200)  String ids) {
         List<Long> idList =
             Arrays.stream(ids.split(","))
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
 
         List<Long> deletedIds = songService.delete(idList);
-        return ResponseEntity.ok("{\"ids\": " + deletedIds + "}");
+        return ResponseEntity.ok(Collections.singletonMap("ids", deletedIds));
     }
 
 }

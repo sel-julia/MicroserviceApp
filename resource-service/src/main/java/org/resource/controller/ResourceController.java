@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.ACCEPT_ENCODING;
@@ -29,8 +30,8 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
-    @PostMapping(produces = "application/json")
-    public ResponseEntity<Object> uploadResource(@RequestBody byte[] bytes) throws TikaException, IOException, SAXException {
+    @PostMapping(consumes = "audio/mpeg", produces = "application/json")
+    public ResponseEntity<Map<String, Long>> uploadResource(@RequestBody byte[] bytes) throws TikaException, IOException, SAXException {
         Long savedResourceId = resourceService.save(bytes);
 
         return ResponseEntity.ok()
@@ -51,7 +52,7 @@ public class ResourceController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteResources(@RequestParam(required = false, name = "id") @Size(max = 200)  String ids) {
+    public ResponseEntity<Map<String, List<Long>>> deleteResources(@RequestParam(required = false, name = "id") @Size(max = 200)  String ids) {
         List<Long> idList =
                 Arrays.stream(ids.split(","))
                         .map(Long::parseLong)
@@ -59,7 +60,7 @@ public class ResourceController {
         List<Long> result = resourceService.delete(idList);
 
         return ResponseEntity.ok()
-                .body(Collections.singletonMap("ids", result.toArray()));
+                .body(Collections.singletonMap("ids", result));
     }
 
     @DeleteMapping("/{id}")
