@@ -7,7 +7,7 @@ public interface SongService {
 
     Long save(Song song);
     Song get(Long id);
-    List<Long> delete(List<Long> ids);
+    List<Long> delete(String ids);
     void deleteById(Long id);
 
 }

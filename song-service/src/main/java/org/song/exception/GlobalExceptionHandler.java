@@ -2,12 +2,15 @@ package org.song.exception;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -53,14 +56,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(errorResponseDTO);
     }
 
-    @ExceptionHandler({NumberFormatException.class, Exception.class})
-    public ResponseEntity<ErrorResponse> handleNumberFormatException(Exception ex) {
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleNumberFormatException(ValidationException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         var errorResponseDTO = ErrorResponse.builder()
-                .errorMessage(ex.getMessage())
+                .errorMessage("Validation failure: " + ex.getMessage())
                 .errorCode(status.value())
                 .build();
 
         return ResponseEntity.status(status).body(errorResponseDTO);
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<ErrorResponse> handleNumberFormatException(NumberFormatException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        var errorResponseDTO = ErrorResponse.builder()
+                .errorMessage("Invalid song ID: must be a positive whole number")
+                .errorCode(status.value())
+                .build();
+
+        return ResponseEntity.status(status).body(errorResponseDTO);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity handleSongServiceException() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An internal server error has occurred");
     }
 }

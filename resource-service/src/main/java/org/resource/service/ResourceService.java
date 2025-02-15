@@ -11,7 +11,7 @@ public interface ResourceService {
 
     Long save(byte[] bytes) throws TikaException, IOException, SAXException;
     Resource get(Long id);
-    List<Long> delete(List<Long> ids);
+    List<Long> delete(String ids);
     void deleteById(Long id);
 
 }

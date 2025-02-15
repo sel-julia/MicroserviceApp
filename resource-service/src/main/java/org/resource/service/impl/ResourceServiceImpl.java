@@ -1,6 +1,7 @@
 package org.resource.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.apache.coyote.BadRequestException;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
@@ -16,11 +17,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
+
+    private static final int MAX_ALLOWED_IDS_LENGTH = 200;
 
     private final ResourceRepository resourceRepository;
     private final Mp3MetadataMapper mapper;
@@ -60,8 +65,17 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<Long> delete(List<Long> ids) {
-        Iterable<Resource> existingResourcesList = resourceRepository.findAllById(ids);
+    public List<Long> delete(String ids) {
+        if (ids.length() > MAX_ALLOWED_IDS_LENGTH) {
+            throw new ValidationException("The length of ids should not exceed " + MAX_ALLOWED_IDS_LENGTH);
+        }
+
+        List<Long> idList =
+                Arrays.stream(ids.split(","))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+
+        Iterable<Resource> existingResourcesList = resourceRepository.findAllById(idList);
 
         List<Long> existingIds = StreamSupport.stream(existingResourcesList.spliterator(), false)
                 .map(Resource::getId)

@@ -2,6 +2,7 @@ package org.resource.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -54,6 +55,17 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         var errorResponseDTO = ErrorResponse.builder()
                 .errorMessage(ex.getMessage())
+                .errorCode(status.value())
+                .build();
+
+        return ResponseEntity.status(status).body(errorResponseDTO);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        var errorResponseDTO = ErrorResponse.builder()
+                .errorMessage("Validation failure: " + ex.getMessage())
                 .errorCode(status.value())
                 .build();
 

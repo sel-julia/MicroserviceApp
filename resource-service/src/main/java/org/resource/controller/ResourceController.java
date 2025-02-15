@@ -1,7 +1,6 @@
 package org.resource.controller;
 
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import org.apache.tika.exception.TikaException;
 import org.resource.entity.Resource;
 import org.resource.service.ResourceService;
@@ -14,11 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.ACCEPT_ENCODING;
 
@@ -52,12 +49,8 @@ public class ResourceController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Map<String, List<Long>>> deleteResources(@RequestParam(required = false, name = "id") @Size(max = 200)  String ids) {
-        List<Long> idList =
-                Arrays.stream(ids.split(","))
-                        .map(Long::parseLong)
-                        .collect(Collectors.toList());
-        List<Long> result = resourceService.delete(idList);
+    public ResponseEntity<Map<String, List<Long>>> deleteResources(@RequestParam(required = false, name = "id") String ids) {
+        List<Long> result = resourceService.delete(ids);
 
         return ResponseEntity.ok()
                 .body(Collections.singletonMap("ids", result));

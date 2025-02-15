@@ -1,7 +1,6 @@
 package org.song.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
 import org.song.dto.SongDTO;
 import org.song.entity.Song;
 import org.song.mapper.SongMapper;
@@ -10,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/songs", produces = "application/json")
@@ -45,13 +42,8 @@ public class SongServiceController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Map<String, List<Long>>> deleteSongMetadata(@RequestParam("id") @Size(max = 200)  String ids) {
-        List<Long> idList =
-            Arrays.stream(ids.split(","))
-                    .map(Long::parseLong)
-                    .collect(Collectors.toList());
-
-        List<Long> deletedIds = songService.delete(idList);
+    public ResponseEntity<Map<String, List<Long>>> deleteSongMetadata(@RequestParam("id") String ids) {
+        List<Long> deletedIds = songService.delete(ids);
         return ResponseEntity.ok(Collections.singletonMap("ids", deletedIds));
     }
 
