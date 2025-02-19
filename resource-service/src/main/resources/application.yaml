@@ -1,19 +1,19 @@
 server:
-  port: 8080
+  port: ${RESOURCE_SERVICE_PORT:8080}
 
 songservice:
-  baseAddress: http://localhost:8081/
+  baseAddress: ${SONG_SERVICE:http://localhost:8081/}
 
 spring:
   application.name: resource-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/resource-db
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/resource-db}
+    username: ${SONG_DB_USER:postgres}
+    password: ${RESOURCE_DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
-  jpa.hibernate.ddl-auto: update
+  jpa.hibernate.ddl-auto: none
   jpa.properties.dialect: org.hibernate.dialect.PostgreSQLDialect
 
   servlet:
