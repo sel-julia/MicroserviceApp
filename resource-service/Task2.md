@@ -165,7 +165,6 @@ Before submitting your task, please ensure that you have completed all the requi
 - [ ] Used `CMD` instead of `ENTRYPOINT` to allow flexibility in overriding commands.
 - [ ] Exposed the correct application port.
 
-✅ **Docker Compose**
 - [ ] Created a `compose.yaml` (`docker-compose.yaml`) file in the project root directory.
 - [ ] Used Alpine-based PostgreSQL images for the databases.
 - [ ] Ensured each service has its own database container.

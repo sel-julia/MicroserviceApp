@@ -15,3 +15,8 @@ spring:
 
   jpa.hibernate.ddl-auto: none
   jpa.properties.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_ZONE_URL:http://localhost:8761/eureka}

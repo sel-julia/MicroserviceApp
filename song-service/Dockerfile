@@ -17,6 +17,4 @@ WORKDIR /song-service-app
 
 COPY --from=build /song-service-app/target/*.jar song-service.jar
 
-EXPOSE 8081
-
 CMD ["java","-jar","song-service.jar"]
