@@ -3,6 +3,8 @@ package org.resource.client;
 import org.resource.dto.SongDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,11 +18,14 @@ public class SongClient {
     @Value("${songservice.baseAddress}")
     private String songServiceAddress;
 
+    private final DiscoveryClient discoveryClient;
+
     private final RestTemplate restTemplate;
 
     @Autowired
-    public SongClient(RestTemplate restTemplate) {
+    public SongClient(RestTemplate restTemplate, DiscoveryClient discoveryClient) {
         this.restTemplate = restTemplate;
+        this.discoveryClient = discoveryClient;
     }
 
     public void sendMetadata(SongDTO metadata) {
@@ -29,7 +34,9 @@ public class SongClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<SongDTO> requestEntity = new HttpEntity<>(metadata, headers);
 
-        String url = songServiceAddress + "/songs";
+        ServiceInstance serviceInstance = discoveryClient.getInstances("song-service").get(0);
+
+        String url = serviceInstance.getUri() + "/songs";
 
         restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
     }

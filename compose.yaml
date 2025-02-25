@@ -30,6 +30,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${RESOURCE_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${RESOURCE_DB_PASSWORD}
       SONG_SERVICE: ${SONG_SERVICE}
+      EUREKA_ZONE_URL: ${EUREKA_ZONE_URL}
 
   song-service:
     build: ./song-service
@@ -39,3 +40,11 @@ services:
       SPRING_DATASOURCE_URL: ${SONG_DB_URL}
       SPRING_DATASOURCE_USERNAME: ${SONG_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${SONG_DB_PASSWORD}
+      EUREKA_ZONE_URL: ${EUREKA_ZONE_URL}
+
+  eureka-service:
+    build: ./eureka-server
+    ports:
+      - "${DISCOVERY_SERVICE_PORT}:${DISCOVERY_SERVICE_PORT}"
+    environment:
+      EUREKA_ZONE_URL: ${EUREKA_ZONE_URL}

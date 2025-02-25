@@ -1,7 +1,7 @@
 # Build stage
 FROM maven:3.9.9-eclipse-temurin-17-alpine AS build
 
-WORKDIR /resource-service-app
+WORKDIR /eureka-server
 
 COPY pom.xml .
 
@@ -13,8 +13,8 @@ RUN mvn clean package -Dmaven.test.skip=true
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine-3.21
 
-WORKDIR /resource-service-app
+WORKDIR /eureka-server
 
-COPY --from=build /resource-service-app/target/*.jar resource-service.jar
+COPY --from=build /eureka-server/target/*.jar eureka-server.jar
 
-CMD ["java","-jar","resource-service.jar"]
+CMD ["java","-jar","eureka-server.jar"]
